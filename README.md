@@ -1,19 +1,109 @@
-Adapte le à ça:
+# Projet Terraform : Déploiement Automatisé de Jenkins sur AWS
 
-Contexte
-Il s'agit d'écrire plusieurs modules permettant de reproduire le déploiement de façon très aisée d'un serveur jenkins sur AWS, et ensuite d'exporter un certain nombre de métadonnées produites lors de l'exécution dans un fichier texte qui se trouvera sur notre machine Terraform.
+## Contexte
+Ce projet Terraform a pour objectif de déployer automatiquement un serveur Jenkins conteneurisé sur AWS. Il comprend plusieurs modules réutilisables permettant un déploiement facile et reproductible, avec export des métadonnées dans un fichier local.
 
-Etapes à réaliser
-Ecrivez un module pour créer une instance ec2 utilisant la version ubuntu jammy (qui s’attachera l’ebs et l’ip publique) dont la taille et le tag seront variabilisés
+## Architecture du Projet
 
-Ecrivez un module pour créer un volume ebs dont la taille sera variabilisée
+### Modules Terraform Créés
 
-Ecrivez un module pour une ip publique (qui s’attachera la security group)
+1. **ec2_instance** - Instance EC2 Ubuntu Jammy
+   - Taille et tags variabilisés
+   - Attachement automatique EBS et IP publique
+   - Installation automatique de Docker et Docker Compose
 
-Ecrivez un module pour créer une security qui ouvrira les ports 80, 443 et 8080
+2. **ebs_volume** - Volume EBS persistant
+   - Taille variabilisée
+   - Attachement automatique à l'instance EC2
 
-Ecrivez un module pour créer une paire de clés de facon dynamique pour la connexion à l'ec2
+3. **public_ip** - Adresse IP élastique
+   - Association automatique à l'instance
+   - Enregistrement dans le fichier de sortie
 
-Créez un dossier app qui va utiliser les 5 modules pour déployer une ec2, bien-sûr vous allez surcharger les variables afin de rendre votre application plus dynamique
+4. **security_group** - Groupe de sécurité
+   - Ouverture des ports 80 (HTTP), 443 (HTTPS) et 8080 (Jenkins)
+   - Règles SSH configurables
 
-A la fin du déploiement, INSTALLEZ JENKINS EN MODE CONTENEURISÉ AVEC DOCKER COMPOSE et enregistrez l’ip publique et le nom de domaine dans un fichier nommé jenkins_ec2.txt
+5. **ssh_key** - Génération dynamique de paire de clés
+   - Création automatique de clé SSH
+   - Stockage sécurisé localement
+   - Injection dans l'instance EC2
+
+### Structure des Fichiers
+```
+terraform-jenkins-aws/
+├── modules/
+│   ├── ec2_instance/
+│   ├── ebs_volume/
+│   ├── public_ip/
+│   ├── security_group/
+│   └── ssh_key/
+├── app/
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   └── terraform.tfvars
+└── jenkins_ec2.txt
+```
+
+## Fonctionnalités Implémentées
+
+### Déploiement Automatique
+- Provisionnement d'une instance EC2 Ubuntu 22.04 LTS (Jammy)
+- Attribution automatique d'une IP publique élastique
+- Création et attachement d'un volume EBS persistant
+- Configuration des règles de sécurité nécessaires
+
+### Installation Jenkins Conteneurisé
+- Installation automatique de Docker et Docker Compose
+- Déploiement de Jenkins via Docker Compose au premier démarrage
+- Configuration persistante via le volume EBS attaché
+
+### Gestion des Secrets et Accès
+- Génération automatique de paire de clés SSH
+- Stockage sécurisé des clés privées
+- Accès SSH configuré pour l'administration
+
+### Export des Métadonnées
+- Enregistrement automatique de l'IP publique dans `jenkins_ec2.txt`
+- Capture du nom de domaine public dans le fichier de sortie
+- Export des informations de connexion essentielles
+
+## Utilisation
+
+### Prérequis
+- Compte AWS avec credentials configurés
+- Terraform 0.14+ installé localement
+- Accès en écriture pour créer les ressources AWS
+
+### Déploiement
+```bash
+cd app/
+terraform init
+terraform apply
+```
+
+### Accès à Jenkins
+Après le déploiement :
+1. Consultez `jenkins_ec2.txt` pour l'IP publique
+2. Accédez à Jenkins via : `http://<IP_PUBLIQUE>:8080`
+3. Connectez-vous en SSH avec la clé générée
+
+### Personnalisation
+Modifiez `app/terraform.tfvars` pour :
+- Changer la taille de l'instance
+- Ajuster la taille du volume EBS
+- Personnaliser les tags
+- Modifier les règles de sécurité
+
+## Sécurité
+- Clés SSH générées dynamiquement et stockées localement
+- Groupes de sécurité restrictifs avec seulement les ports nécessaires ouverts
+- Aucune information sensible commitée dans le repository
+
+## Maintenance
+- `terraform destroy` pour nettoyer toutes les ressources
+- Les volumes EBS persistents conservent les données de Jenkins
+- Mise à jour facile via modification des variables
+
+Ce projet offre une solution complète et professionnelle pour le déploiement automatisé de Jenkins sur AWS avec une infrastructure as code maintenable et sécurisée.
