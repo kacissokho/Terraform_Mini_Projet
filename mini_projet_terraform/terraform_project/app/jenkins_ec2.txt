@@ -1,0 +1,11 @@
+Jenkins Server Information:
+Public IP: 3.216.98.164
+Public DNS: ec2-54-159-178-147.compute-1.amazonaws.com
+Jenkins URL: http://3.216.98.164:8080
+Jenkins URL: http://ec2-54-159-178-147.compute-1.amazonaws.com:8080
+
+SSH Connection:
+ssh -i "./.secrets/jenkins-key.pem" ubuntu@3.216.98.164
+
+To get initial admin password:
+sudo docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
