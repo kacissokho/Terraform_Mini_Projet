@@ -88,6 +88,8 @@ Après le déploiement :
 1. Consultez `jenkins_ec2.txt` pour l'IP publique
 2. Accédez à Jenkins via : `http://<IP_PUBLIQUE>:8080`
 3. Connectez-vous en SSH avec la clé générée
+Jenkins Tableau de bord:
+**![](https://github.com/kacissokho/PayMyBuddy/blob/master/.m2/paymybuddy-staging.png)**
 
 ### Personnalisation
 Modifiez `app/terraform.tfvars` pour :
