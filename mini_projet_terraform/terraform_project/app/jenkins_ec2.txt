@@ -1,9 +1,0 @@
-Jenkins Server Information:
-Public IP: 44.209.28.91
-Public DNS: ec2-107-21-144-6.compute-1.amazonaws.com
-Jenkins URL: http://44.209.28.91:8080
-Jenkins URL: http://ec2-107-21-144-6.compute-1.amazonaws.com:8080
-
-To get initial admin password:
-ssh -i app/ssh/terraform-key.pem ubuntu@44.209.28.91
-sudo docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
